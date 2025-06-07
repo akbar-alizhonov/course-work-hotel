@@ -35,7 +35,10 @@ cd course-work-hotel
 ### Если у вас скачана СУБД MS SQL Server, то можете пропускать этот шаг
 - Перейдите по этой ссылке [MS SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) и скачайте необходимую версию СУБД
 - Или запустите образ в [Docker](https://hub.docker.com/r/microsoft/mssql-server)
-- И создайте необходимые таблицы
+
+### Создание бд
+- Название бд обязательно должно быть **Hotels**
+- И запустите миграции которые находятся в папке **migrations**
 
 ### Соберите приложение и запустите exe-шник
 ```bash
