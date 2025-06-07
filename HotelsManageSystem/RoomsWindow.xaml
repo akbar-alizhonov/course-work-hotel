@@ -1,0 +1,196 @@
+<Window x:Class="HotelsManageSystem.RoomsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Управление номерами отеля" 
+        WindowState="Maximized"
+        WindowStartupLocation="CenterScreen"
+        FontFamily="Segoe UI">
+
+    <Window.Resources>
+        <!-- Общие ресурсы -->
+        <SolidColorBrush x:Key="PrimaryColor" Color="#FF3A86FF"/>
+        <SolidColorBrush x:Key="PrimaryDarkColor" Color="#FF2B6DE0"/>
+        <SolidColorBrush x:Key="LightBackground" Color="#FFF5F7FF"/>
+        <SolidColorBrush x:Key="CardBackground" Color="White"/>
+        <SolidColorBrush x:Key="TitleColor" Color="#1A1A2E"/>
+        <SolidColorBrush x:Key="SubtitleColor" Color="#666"/>
+
+        <DropShadowEffect x:Key="CardShadow" 
+                          BlurRadius="12" 
+                          Opacity="0.1" 
+                          ShadowDepth="2" 
+                          Direction="270"/>
+
+        <DropShadowEffect x:Key="HoverShadow" 
+                          BlurRadius="16" 
+                          Opacity="0.2" 
+                          ShadowDepth="3" 
+                          Direction="270"/>
+
+        <!-- Стиль кнопок -->
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource PrimaryColor}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12 8"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Margin" Value="4"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" 
+                                CornerRadius="6"
+                                Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource PrimaryDarkColor}"/>
+                                <Setter TargetName="border" Property="Effect" Value="{StaticResource HoverShadow}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль иконных кнопок -->
+        <Style x:Key="IconButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+            <Setter Property="Width" Value="32"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
+
+        <!-- Стиль карточки номера -->
+        <Style x:Key="RoomCard" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource CardBackground}"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="16"/>
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="Effect" Value="{StaticResource CardShadow}"/>
+            <Setter Property="Width" Value="200"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Effect" Value="{StaticResource HoverShadow}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Стиль заголовка окна -->
+        <Style x:Key="WindowTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="{StaticResource TitleColor}"/>
+            <Setter Property="Margin" Value="0 0 0 20"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Background="{StaticResource LightBackground}">
+        <!-- Адаптивный фон -->
+
+        <!-- Фоновые элементы -->
+        <Ellipse Width="400" Height="400" Fill="{StaticResource PrimaryColor}" Opacity="0.05"
+                 HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-150 -150 0 0"/>
+        <Ellipse Width="300" Height="300" Fill="{StaticResource PrimaryColor}" Opacity="0.05"
+                 HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 -120 -120"/>
+
+        <!-- Основной контент -->
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Заголовок с названием отеля -->
+            <TextBlock Grid.Row="0" 
+                       Text="{Binding Hotel.Name, StringFormat='Номера отеля: {0}'}" 
+                       Style="{StaticResource WindowTitle}"/>
+
+            <!-- Панель управления -->
+            <StackPanel Grid.Row="1" 
+                        Orientation="Horizontal" 
+                        HorizontalAlignment="Right"
+                        Margin="0 0 0 20">
+                <Button Content="Добавить номер" 
+                        Style="{StaticResource PrimaryButton}"
+                        Command="{Binding AddRoomCommand}"
+                        Padding="16 8"
+                        FontSize="16"/>
+            </StackPanel>
+
+            <!-- Контейнер карточек номеров -->
+            <ScrollViewer Grid.Row="2" 
+                          VerticalScrollBarVisibility="Auto" 
+                          HorizontalScrollBarVisibility="Disabled">
+                <ItemsControl ItemsSource="{Binding filterRooms}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <!-- Карточка номера -->
+                            <Border Style="{StaticResource RoomCard}">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- ID номера -->
+                                    <TextBlock Grid.Row="0" 
+                                               Text="{Binding Id, StringFormat=ID: {0}}" 
+                                               Foreground="{StaticResource SubtitleColor}"
+                                               FontSize="12"
+                                               Margin="0 0 0 4"/>
+
+                                    <!-- Номер комнаты -->
+                                    <TextBlock Grid.Row="1" 
+                                               Text="{Binding Number, StringFormat=Номер: {0}}" 
+                                               FontSize="18"
+                                               FontWeight="SemiBold"
+                                               Foreground="{StaticResource TitleColor}"
+                                               Margin="0 0 0 12"/>
+
+                                    <!-- Дополнительная информация (можно расширить) -->
+                                    <TextBlock Grid.Row="2" 
+                                               Text="Дополнительные детали..."
+                                               Foreground="{StaticResource SubtitleColor}"
+                                               FontSize="14"
+                                               Margin="0 0 0 16"
+                                               Visibility="Collapsed"/>
+
+                                    <!-- Кнопки действий -->
+                                    <StackPanel Grid.Row="3" 
+                                                Orientation="Horizontal" 
+                                                HorizontalAlignment="Center">
+                                        <Button Content="✏" 
+                                                Style="{StaticResource IconButton}"
+                                                ToolTip="Редактировать"/>
+
+                                        <Button Content="❌" 
+                                                Style="{StaticResource IconButton}"
+                                                ToolTip="Удалить"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+            <!-- Сообщение при отсутствии номеров -->
+            
+        </Grid>
+    </Grid>
+</Window>
